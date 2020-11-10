@@ -305,9 +305,12 @@ function normalizeProps (options: Object, vm: ?Component) {
     while (i--) {
       val = props[i]
       if (typeof val === 'string') {
+        // 驼峰化
         name = camelize(val)
+        // 赋予type
         res[name] = { type: null }
       } else if (process.env.NODE_ENV !== 'production') {
+        // props的数组必须为字符串
         warn('props must be strings when using array syntax.')
       }
     }

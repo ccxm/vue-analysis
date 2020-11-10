@@ -50,6 +50,7 @@ export function initState (vm: Component) {
   const opts = vm.$options
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
+  // 如果有data，则直接初始化，没有则赋空
   if (opts.data) {
     initData(vm)
   } else {
@@ -111,6 +112,7 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+  // 获取data，如果是函数，则调用data()
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
@@ -129,6 +131,7 @@ function initData (vm: Component) {
   let i = keys.length
   while (i--) {
     const key = keys[i]
+    // 不能与方法重名
     if (process.env.NODE_ENV !== 'production') {
       if (methods && hasOwn(methods, key)) {
         warn(
@@ -137,6 +140,7 @@ function initData (vm: Component) {
         )
       }
     }
+    // 不能与props重名
     if (props && hasOwn(props, key)) {
       process.env.NODE_ENV !== 'production' && warn(
         `The data property "${key}" is already declared as a prop. ` +
@@ -144,6 +148,7 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      // 不是以_或者$开头的属性代理到vm上
       proxy(vm, `_data`, key)
     }
   }

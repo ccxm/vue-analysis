@@ -43,7 +43,10 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
+    // 定义一个ob属性，用来判断是否已经定义过响应式，已经定义了就不再需要定义
+    // 同时设置enumerable为false，这样子遍历的时候不会再取到，避免递归遍历
     def(value, '__ob__', this)
+    // 数组与非数组分别定义
     if (Array.isArray(value)) {
       if (hasProto) {
         protoAugment(value, arrayMethods)
@@ -61,6 +64,7 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
+  // 遍历属性，并加上getters/setters方法
   walk (obj: Object) {
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
@@ -141,12 +145,20 @@ export function defineReactive (
 ) {
   const dep = new Dep()
 
+  // 获取对象的配置属性,就是对象后面的属性
+  /**
+   * Object.defineProperty(obj, key, {
+        configurable: true,
+        writable: true
+    })
+   */
   const property = Object.getOwnPropertyDescriptor(obj, key)
   if (property && property.configurable === false) {
     return
   }
 
   // cater for pre-defined getter/setters
+  // 是否已经定义了getter/setters
   const getter = property && property.get
   const setter = property && property.set
   if ((!getter || setter) && arguments.length === 2) {
